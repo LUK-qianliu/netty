@@ -2,6 +2,8 @@ package com.qianliu.client;
 
 import org.jboss.netty.channel.*;
 
+@ChannelHandler.Sharable  // 表示client1 - 连接server1时使用这个handler实例，client2- 连接server2时也可以使用这个handler实例
+                            // 如果被@ChannelHandler.Sharable注解，里面不可以存在“可被修改的属性”，这样client1去修改属性1，client2也去修改属性1，不安全
 public class hiHandler extends SimpleChannelHandler{
     /**
      * 接收消息

@@ -1,0 +1,13 @@
+// proto3语法注解:如果您不这样做，protobuf编译器将假定您正在使用proto2,这必须是文件的第一个非空的非注释行。
+syntax = "proto3";
+
+//包名
+option java_package = "com.qianliu.proto";
+
+// 生成的java名
+option java_outer_classname = "MessageProto";
+
+message Message {
+  string id = 1;
+  string content = 2;
+}
