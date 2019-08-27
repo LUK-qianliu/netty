@@ -26,6 +26,8 @@ public class ProtoBufClientHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
         cause.printStackTrace();
         ctx.close();
+
     }
+
 
 }

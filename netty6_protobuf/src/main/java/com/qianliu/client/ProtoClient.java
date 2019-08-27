@@ -1,7 +1,6 @@
 package com.qianliu.client;
 
 import com.qianliu.proto.MessageProto;
-import com.qianliu.server.ProtoServer;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
@@ -9,13 +8,15 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
+
+
+import java.util.concurrent.TimeUnit;
 
 public class ProtoClient {
     public void connect(int port) throws Exception {
         // 配置服务端的NIO线程组
         EventLoopGroup group = new NioEventLoopGroup();
+        ChannelFuture f = null; // 回调
 
         try {
             Bootstrap b = new Bootstrap();
@@ -31,14 +32,23 @@ public class ProtoClient {
                     });
 
             // 绑定端口，同步等待成功
-            ChannelFuture f = b.connect("localhost",port).sync();
+            f = b.connect("localhost",port).sync();
 
             System.out.println("client start");
+            TimeUnit.SECONDS.sleep(1);
             // 等待服务端监听端口关闭
-            f.channel().closeFuture().sync();
+            f.addListener(ChannelFutureListener.CLOSE);
         } finally {
             // 优雅退出，释放线程池资源
             group.shutdownGracefully();
+
+            if(null != f){
+                try {
+                    f.channel().closeFuture().sync();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
